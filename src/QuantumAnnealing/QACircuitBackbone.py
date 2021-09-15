@@ -27,11 +27,13 @@ class Hamiltonian:
         return hamit
 
 class CircuitBackbone:
-    def __init__(self, hamiltonian, time_step, time_final) -> None:
+    def __init__(self, n_qubit, hamiltonian, time_step, time_final, state_init) -> None:
+        self.n_qubit = n_qubit
         self.hamiltonian = hamiltonian
         self.t = 0
         self.time_step = time_step
         self.time_final = time_final
+        self.state_init = state_init
     
     def step(self):
         t_end = min(self.t+self.time_step, self.time_final)
@@ -43,9 +45,14 @@ class CircuitBackbone:
     def is_end(self):
         return self.t == self.time_final
 
+def obtain_example_backbone(T_step=0.1, T_end=32):
+    hamit = Hamiltonian([("X0", LinearTrojectory((1,0), T_end)), ("Z0", LinearTrojectory((0, 1), T_end))])
+    backbone = CircuitBackbone(1, hamit, T_step, T_end, [0])
+    return backbone
+
 if __name__ == '__main__':
     T_end = 32
     hamit = Hamiltonian([("X0", LinearTrojectory((1,0), T_end)), ("Z0", LinearTrojectory((0, 1), T_end))])
-    backbone = CircuitBackbone(hamit, 1, T_end)
+    backbone = CircuitBackbone(1, hamit, 1, T_end, [0])
     while not backbone.is_end():
         print(backbone.step())

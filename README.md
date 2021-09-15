@@ -2,4 +2,4 @@
 
 ## Setting up environment
 
-This project requires `hiq` package.
+This project requires `projectq` package.
