@@ -14,45 +14,38 @@ class LinearTrojectory:
         r = t/self.time_end
         return self.mags[0]*(1-r)+self.mags[1]*r
 
-class Pauli:
-    def __init__(self, type, target, trojectory) -> None:
-        self.type = type
-        assert type in ['x', 'y', 'z'] + ['xx', 'yy', 'zz', 'xy', 'yz', 'xz']
-        self.target = target
-        self.trojectory = trojectory
-    
-    def freeze(self, time):
-        return {'type': self.type, 'target': self.target, 'mag': self.trojectory.value(time)}
-
 class Hamiltonian:
-    # only 2-local
-    def __init__(self, n_qubits, pauli):
-        self.n_qubits = n_qubits
-        self.pauli = pauli
-
-    def freeze(self, time):
-        pauli_list = []
-        for p in self.pauli:
-            pauli_list.append(p.freeze(time))
-        return pauli_list
-
-class QACircuitBackbone:
-    def __init__(self, n_qubits, hamit, time_end):
-        self.n_qubits = n_qubits
-        self.hamit = hamit
-        self.time_end = time_end
+    def __init__(self, components) -> None:
+        # components in form of [("X0", troj), ...]
+        # usually use 2-local
+        self.components = components
     
-    def compile(self):
-        t = 0
-        gates = []
-        for t in range(self.time_end):
-            gates.append(self.hamit.freeze(t+0.5))
-        return gates
+    def freeze(self, time):
+        hamit = []
+        for pauli, troj in self.components:
+            hamit.append((pauli, troj.value(time)))
+        return hamit
+
+class CircuitBackbone:
+    def __init__(self, hamiltonian, time_step, time_final) -> None:
+        self.hamiltonian = hamiltonian
+        self.t = 0
+        self.time_step = time_step
+        self.time_final = time_final
+    
+    def step(self):
+        t_end = min(self.t+self.time_step, self.time_final)
+        t_mid = 0.5*(self.t+t_end)
+        dt = t_end - self.t
+        self.t = t_end
+        return self.hamiltonian.freeze(t_mid), dt
+    
+    def is_end(self):
+        return self.t == self.time_final
 
 if __name__ == '__main__':
-    sx = Pauli('x', 0, LinearTrojectory((0.05, 0), 128))
-    sz = Pauli('z', 0, LinearTrojectory((0, 0.05), 128))
-    paulis = [sx, sz]
-    hamit = Hamiltonian(1, paulis)
-    circuit_backbone = QACircuitBackbone(1, hamit, 128)
-    print(circuit_backbone.compile())
+    T_end = 32
+    hamit = Hamiltonian([("X0", LinearTrojectory((1,0), T_end)), ("Z0", LinearTrojectory((0, 1), T_end))])
+    backbone = CircuitBackbone(hamit, 1, T_end)
+    while not backbone.is_end():
+        print(backbone.step())
