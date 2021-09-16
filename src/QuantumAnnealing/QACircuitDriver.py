@@ -25,7 +25,7 @@ class TimeHamitonian:
     def freeze(self, time):
         return self.hamit, self.troj.value(time)
 
-class QACircuitDriver:
+class QADriver:
     def __init__(self, n_qubit, hamiltonian, time_step, time_final, state_init) -> None:
         self.eng = MainEngine()
         self.n_qubit = n_qubit
@@ -72,8 +72,6 @@ class QACircuitDriver:
         final_state = self.get_state()
         All(Measure) | qubits
         self.eng.flush()
-        for q in qubits:
-            self.eng.deallocate_qubit(q)
         return final_state, state_track
 
 if __name__ == '__main__':
@@ -84,7 +82,7 @@ if __name__ == '__main__':
     hamit_final = (QubitOperator('Z0') + QubitOperator(()))*(QubitOperator('Z1') + QubitOperator(()))*0.5**2
     hamit_start_t = TimeHamitonian(hamit_start, LinearTrojectory((1,0), T_end))
     hamit_final_t = TimeHamitonian(hamit_final, LinearTrojectory((0,1), T_end))
-    driver = QACircuitDriver(
+    driver = QADriver(
         n_qubit=2,
         hamiltonian=[hamit_start_t, hamit_final_t],
         time_step=0.1,
