@@ -1,5 +1,5 @@
 from projectq.ops import QubitOperator
-from QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
+from .QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
 
 class GroverSearchProblem:
     def __init__(self, n_qubit, target=None) -> None:
