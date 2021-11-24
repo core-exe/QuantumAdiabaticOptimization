@@ -2,6 +2,14 @@ from projectq.ops import QubitOperator
 from QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
 import numpy as np
 
+def get_3sat_clauses(n_vars=4, n_clauses=17):
+    rand_var = np.random.randint(low=0, high=n_vars, size=(n_clauses, 3))
+    rand_positive = np.random.randint(low=0, high=2, size=(n_clauses, 3))*2-1
+    clauses = []
+    for i in range(n_clauses):
+        clauses.append([(int(rand_var[i][j]), int(rand_positive[i][j])) for j in range(3)])
+    return clauses
+
 class ThreeSatProblem:
     def __init__(self, n_qubit, clauses) -> None:
         self.n_qubit = n_qubit
