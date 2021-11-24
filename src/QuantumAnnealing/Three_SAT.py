@@ -1,5 +1,5 @@
 from projectq.ops import QubitOperator
-from QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
+from .QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
 import numpy as np
 
 def get_3sat_clauses(n_vars=4, n_clauses=17):
@@ -26,7 +26,8 @@ class ThreeSatProblem:
     
     def loss(self, state_info):
         bitmap, state = state_info
-        print(bitmap)
+        state = np.array(state)
+        # print(bitmap)
         bitpos_to_qubit = {bitmap[k] : k for k in bitmap.keys()}
         def get_mask(clause):
             mask = np.array([1])
@@ -47,9 +48,14 @@ class ThreeSatProblem:
         for clause in self.clauses:
             mask = get_mask(clause)
             clause_expect += np.dot(mask, probs)
-            print(probs)
-            print(mask)
+            # print(probs)
+            # print(mask)
         return 1-clause_expect / len(self.clauses)
+
+def get_3sat_problem(n_qubit):
+    n_clauses = int(4.25 * n_qubit)
+    clauses = get_3sat_clauses(n_qubit, n_clauses)
+    return ThreeSatProblem(n_qubit, clauses)
 
 def get_default_driver_3sat(problem, time_final, time_step):
     n_qubit = problem.n_qubit

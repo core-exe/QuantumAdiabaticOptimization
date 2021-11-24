@@ -1,6 +1,7 @@
 from numpy import not_equal
 from projectq.ops import QubitOperator
 from .QACircuitDriver import LinearTrojectory, TimeHamitonian, QADriver
+import numpy as np
 
 class GroverSearchProblem:
     def __init__(self, n_qubit, target=None) -> None:
@@ -33,6 +34,10 @@ def get_default_driver_gs(problem: 'GroverSearchProblem', time_final, time_step)
     ]
     driver = QADriver(n_qubit, hamit, time_step, time_final, [0]*n_qubit)
     return driver
+
+def get_gs_problem(n_qubit):
+    target = np.random.randint(0, 2, (n_qubit,))
+    return GroverSearchProblem(n_qubit, target)
 
 if __name__ == '__main__':
     problem = GroverSearchProblem(2, [0,0])
