@@ -43,14 +43,14 @@ class ThreeSatProblem:
                         bit_mask = np.array([1, 0])
                 mask = np.tensordot(mask, bit_mask, 0).flatten()
             return 1-mask
+        mask_total = np.zeros((2**self.n_qubit, ))
         probs = (state * state.conjugate()).real
-        clause_expect = 0
         for clause in self.clauses:
-            mask = get_mask(clause)
-            clause_expect += np.dot(mask, probs)
+            mask_total += get_mask(clause)
+        clause_expect = np.dot(mask_total, probs)
             # print(probs)
             # print(mask)
-        return 1-clause_expect / len(self.clauses)
+        return 1-clause_expect / np.max(mask_total)
 
 def get_3sat_problem(n_qubit):
     n_clauses = int(4.25 * n_qubit)
