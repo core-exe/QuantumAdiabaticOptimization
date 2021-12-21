@@ -1,0 +1,1 @@
+python3 main.py --n_qubit 10 --time_final 256 --output_dir output/qubit_10_t_256/

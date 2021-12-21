@@ -1,0 +1,1 @@
+python3 main.py --n_qubit 8 --time_final 128 --output_dir output/qubit_8_t_128/

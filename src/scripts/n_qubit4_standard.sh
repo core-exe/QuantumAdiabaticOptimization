@@ -1,0 +1,1 @@
+python3 main.py --n_qubit 4 --time_final 32 --output_dir output/qubit_4_t_32/

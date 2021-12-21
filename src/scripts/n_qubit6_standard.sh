@@ -1,0 +1,1 @@
+python3 main.py --n_qubit 6 --time_final 64 --output_dir output/qubit_6_t_64/

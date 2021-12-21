@@ -47,10 +47,12 @@ class ThreeSatProblem:
         probs = (state * state.conjugate()).real
         for clause in self.clauses:
             mask_total += get_mask(clause)
-        clause_expect = np.dot(mask_total, probs)
+        opt_prob = np.dot((mask_total == np.max(mask_total)), probs)
+        # clause_expect = np.dot(mask_total, probs)
             # print(probs)
             # print(mask)
-        return 1-clause_expect / np.max(mask_total)
+        # return 1-clause_expect / np.max(mask_total)
+        return 1 - opt_prob
 
 def get_3sat_problem(n_qubit):
     n_clauses = int(4.25 * n_qubit)
